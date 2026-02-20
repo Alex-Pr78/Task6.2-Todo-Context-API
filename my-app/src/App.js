@@ -1,41 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useTodos } from './hooks/useTodos';
 import { ControlPanel, TodoListComponent } from './components';
+import { API_URL } from './utils/api-url';
 import styles from './App.module.css';
 
-const API_URL = 'http://localhost:3005/todos';
-
 export const App = () => {
-	const [todos, setTodos] = useState([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
+	const { todos, setTodos, loading, error, setError } = useTodos();
 
 	const [newTodoText, setNewTodoText] = useState('');
 	const [searchText, setSearchText] = useState('');
 	const [sortAlpha, setSortAlpha] = useState(false);
-
-	// Загрузка списка задач с сервера
-	const fetchTodos = () => {
-		setLoading(true);
-		fetch(API_URL)
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error('Ошибка загрузки данных');
-				}
-				return response.json();
-			})
-			.then((data) => {
-				setTodos(data);
-				setLoading(false);
-			})
-			.catch((err) => {
-				setError(err.message);
-				setLoading(false);
-			});
-	};
-
-	useEffect(() => {
-		fetchTodos();
-	}, []);
 
 	// Добавление новой задачи
 	const addTodo = () => {
