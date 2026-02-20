@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { ControlPanel, TodoListComponent } from './components';
 import styles from './App.module.css';
 
 const API_URL = 'http://localhost:3005/todos';
@@ -107,67 +108,24 @@ export const App = () => {
 
 	return (
 		<div className={styles.container}>
-			<h2>Список дел</h2>
+			<ControlPanel
+				newTodoText={newTodoText}
+				setNewTodoText={setNewTodoText}
+				addTodo={addTodo}
+				searchText={searchText}
+				setSearchText={setSearchText}
+				setSortAlpha={setSortAlpha}
+			/>
+
 			{loading && <p>Loading...</p>}
 			{error && <p className={styles.error}>{error}</p>}
 
-			<div className={styles['input-wrapper']}>
-				<input
-					type="text"
-					className={styles.todoInput}
-					placeholder="Добавить задачу..."
-					value={newTodoText}
-					onChange={(event) => setNewTodoText(event.target.value)}
-					onKeyDown={(event) => {
-						if (event.key === 'Enter') addTodo();
-					}}
-				/>
-				<button type="button" onClick={addTodo} className={styles.button}>
-					Add
-				</button>
-			</div>
-
-			<div className={styles['input-wrapper']}>
-				<input
-					type="text"
-					placeholder="Поиск..."
-					value={searchText}
-					onChange={(e) => setSearchText(e.target.value)}
-					className={styles.todoInput}
-				/>
-				<button type="button" onClick={() => setSortAlpha((prev) => !prev)}>
-					Ok
-				</button>
-			</div>
-
 			{!loading && !error && (
-				<ul className={styles.list}>
-					{displayedTodos.length === 0 && <li className={styles.empty}>Нет дел.</li>}
-					{displayedTodos.map(({ id, title, completed }) => (
-						<li
-							key={id}
-							className={styles.listItem}
-							style={{ background: completed ? '#607d8b' : '#1f83f2' }}
-						>
-							<label>
-								<input
-									type="checkbox"
-									checked={completed}
-									onChange={() => toggleCompleted({ id, completed })}
-									className={styles['real-checkbox']}
-								/>
-								<span className={styles['custom-checkbox']}></span>
-								{title}
-							</label>
-
-							<button
-								onClick={() => deleteTodo(id)}
-								className={styles['delete-case']}
-								aria-label="Удалить"
-							></button>
-						</li>
-					))}
-				</ul>
+				<TodoListComponent
+					displayedTodos={displayedTodos}
+					toggleCompleted={toggleCompleted}
+					deleteTodo={deleteTodo}
+				/>
 			)}
 		</div>
 	);
